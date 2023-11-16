@@ -7,8 +7,8 @@ sealed class MainEvent {
 
 
     class DeleteCustomersSeleccionadas() : MainEvent()
-    class DeleteCustomer(val persona:Customer) : MainEvent()
-    class SeleccionaCustomer(val persona: Customer) : MainEvent()
+    class DeleteCustomer(val custo:Customer) : MainEvent()
+    class SeleccionaCustomer(val customer: Customer) : MainEvent()
     class InsertCustomer(val persona: Customer) : MainEvent()
     class GetCustomerPorId(val id: Int) : MainEvent()
 
