@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/favorite"
+        android:contentDescription="descripcion"
+        android:title="favortio"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/search"
+        android:contentDescription="des2"
+        android:title="SEARCH"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/more"
+        android:title="MORE"
+        android:contentDescription="des1"
+        app:showAsAction="never" />
+</menu>
