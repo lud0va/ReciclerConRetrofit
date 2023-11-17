@@ -94,7 +94,7 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
            when (result) {
                 is NetworkResultt.Error -> _error.value = result.message ?: ""
                 is NetworkResultt.Loading -> TODO()
-                is NetworkResultt.Success -> result.data?.let { listaPersonas.addAll(it) }
+                is NetworkResultt.Success ->listaPersonas= result.data as MutableList<Customer>
             }
 
 
