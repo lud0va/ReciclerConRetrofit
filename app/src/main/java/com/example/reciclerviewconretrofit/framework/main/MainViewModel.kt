@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
     private val _sharedFlow = MutableSharedFlow<String>()
     val sharedFlow = _sharedFlow.asSharedFlow()
 
-    private val listaPersonas = mutableListOf<Customer>()
+    private var listaPersonas = mutableListOf<Customer>()
 
 
     private var selectedPersonas = mutableListOf<Customer>()
@@ -33,7 +33,8 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
     fun handleEvent(event: MainEvent) {
         when (event) {
             MainEvent.GetCustomers -> {
-                getAllCustomers
+                getCustomers()
+
             }
             is MainEvent.InsertCustomer -> {
                 //insertPersonaWithCosas(event.persona!!)
@@ -87,23 +88,19 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
 
         viewModelScope.launch {
 
-            var result = getAllCustomers
+            var result = getAllCustomers.invoke()
 
 
-           /* when (result) {
+           when (result) {
                 is NetworkResultt.Error -> _error.value = result.message ?: ""
                 is NetworkResultt.Loading -> TODO()
-                is NetworkResultt.Success -> listaPersonas[0].first_name = result.data?.nombre ?: ""
-            }*/
+                is NetworkResultt.Success -> result.data?.let { listaPersonas.addAll(it) }
+            }
 
 
-           // result = dogRepository.getDog()
+            result = getAllCustomers.invoke()
 
-          /*  when (result) {
-                is NetworkResultt.Error -> _error.value = result.message ?: ""
-                is NetworkResultt.Loading -> TODO()
-                is NetworkResultt.Success -> listaPersonas[1].nombre = result.data?.nombre ?: ""
-            }*/
+
 
 
             _uiState.value = _uiState.value?.copy(customers = listaPersonas.toList())

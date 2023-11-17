@@ -20,7 +20,7 @@ data class CustomerResponse(
     @SerializedName("phone")
     val phone:String,
     @SerializedName("date_of_birth")
-    val date:LocalDate
+    val date_of_birth:LocalDate
 )
 
-fun CustomerResponse.toCustomer():Customer=Customer(id,first_name,last_name,email,phone,date)
+public fun CustomerResponse.toCustomer(): Customer = Customer(id, first_name, last_name, email, phone, date_of_birth)

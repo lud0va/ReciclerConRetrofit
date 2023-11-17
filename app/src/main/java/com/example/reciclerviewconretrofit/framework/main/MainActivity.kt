@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
       }
 
-      //viewModel.handleEvent(MainEvent.GetPersonas)
+      viewModel.handleEvent(MainEvent.GetCustomers)
       configAppBar();
 
    }

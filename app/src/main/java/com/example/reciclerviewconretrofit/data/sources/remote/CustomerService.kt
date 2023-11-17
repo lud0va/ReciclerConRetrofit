@@ -11,8 +11,8 @@ import retrofit2.http.GET
 interface CustomerService {
 
 
-    @GET(Constants.RANDOM_URL)
-    suspend fun getCustomers(): Response<List<Customer>>
+    @GET("customers")
+    suspend fun getCustomers(): Response<List<CustomerResponse>>
 
     @GET("")
     suspend fun getCustomer():Response<Customer>
