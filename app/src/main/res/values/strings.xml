@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ReciclerViewConRetrofit</string>
+    <string name="daete_of_birth">Daete of birth</string>
+    <string name="phone">Phone</string>
 </resources>

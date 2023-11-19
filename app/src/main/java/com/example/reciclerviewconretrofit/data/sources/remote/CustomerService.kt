@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.DELETE
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface CustomerService {
 
@@ -14,8 +15,9 @@ interface CustomerService {
     @GET("customers")
     suspend fun getCustomers(): Response<List<CustomerResponse>>
 
-    @GET("")
-    suspend fun getCustomer():Response<Customer>
+    @GET("customers/{id}")
+
+    suspend fun getCustomer(@Path("id") id:Int):Response<CustomerResponse>
     @DELETE("")
     suspend fun deleteCustomer():Response<Int>
 

@@ -95,10 +95,11 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
                 is NetworkResultt.Error -> _error.value = result.message ?: ""
                 is NetworkResultt.Loading -> TODO()
                 is NetworkResultt.Success ->listaPersonas= result.data as MutableList<Customer>
-            }
+               else -> {}
+           }
 
 
-            result = getAllCustomers.invoke()
+
 
 
 

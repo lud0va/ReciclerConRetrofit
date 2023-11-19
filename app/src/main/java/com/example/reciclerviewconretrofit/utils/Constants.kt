@@ -2,8 +2,9 @@ package com.example.recyclerviewenhanced.utils
 
 object Constants {
 
-
-
+       const val CUSTOMER_NOT_FOUND="customer not found"
+        const val ID_INVAL="id invalida"
+        const val ID="id"
         const val BASE_URL = "http://informatica.iesquevedo.es:2326/RestauranteLuis/api/"
         const val RANDOM_URL = "api/breeds/image/random"
 

@@ -1,6 +1,7 @@
 package com.maxi.dogapi.di
 
 import com.example.reciclerviewconretrofit.data.sources.remote.CustomerService
+import com.example.reciclerviewconretrofit.data.sources.remote.OrderService
 import com.example.recyclerviewenhanced.data.sources.remote.ServiceInterceptor
 import com.example.recyclerviewenhanced.utils.Constants
 import com.squareup.moshi.FromJson
@@ -75,13 +76,13 @@ object NetworkModule {
     fun provideCurrencyService(retrofit: Retrofit): CustomerService =
         retrofit.create(CustomerService::class.java)
 
-    /*  @Singleton
+    @Singleton
     @Provides
     fun provideOrderService(retrofit: Retrofit): OrderService =
         retrofit.create(OrderService::class.java)
-}*/
-
 }
+
+
 class LocalDateAdapter {
 
     @ToJson

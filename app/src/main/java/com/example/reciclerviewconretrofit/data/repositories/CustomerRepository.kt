@@ -15,7 +15,7 @@ class CustomerRepository @Inject constructor(
     private val customerService: CustomerService
 ) {
 
-    suspend fun getCustomer(): NetworkResultt<List<Customer>> {
+    suspend fun getAllCustomers(): NetworkResultt<List<Customer>> {
         try {
             val response = customerService.getCustomers()
             if (response.isSuccessful) {
@@ -33,5 +33,19 @@ class CustomerRepository @Inject constructor(
         }
     }
 
-
+    suspend fun getCustomer(id: Int): NetworkResultt<Customer> {
+        try {
+            val response = customerService.getCustomer(id)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let {
+                    val customer= it.toCustomer()
+                    return NetworkResultt.Success(customer)
+                }
+            }
+            return error("${response.code()} ${response.message()}")
+        } catch (e: Exception) {
+            return error(e.message ?: e.toString())
+        }
+    }
 }

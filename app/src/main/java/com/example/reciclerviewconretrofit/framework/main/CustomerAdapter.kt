@@ -15,7 +15,8 @@ import com.example.recyclerviewenhanced.databinding.ViewCustomerBinding
 
 class CustomerAdapter(
     val context: Context,
-    val actions: CustomerActions
+    val actions: CustomerActions,
+    private val cambiarPantalla: (Int) -> Unit
 
 ) : ListAdapter<Customer, CustomerAdapter.ItemViewholder>(DiffCallback()) {
 
@@ -59,7 +60,7 @@ class CustomerAdapter(
 
     override fun onBindViewHolder(holder: ItemViewholder, position: Int) = with(holder) {
         val item = getItem(position)
-        bind(item)
+        bind(item, cambiarPantalla)
     }
 
 
@@ -67,9 +68,14 @@ class CustomerAdapter(
 
         private val binding = ViewCustomerBinding.bind(itemView)
 
-        fun bind(customer: Customer) {
+        fun bind(customer: Customer ,cambiarPantalla:(Int)->Unit) {
+               itemView.setOnClickListener{
 
+                   cambiarPantalla(customer.id)
+               }
             itemView.setOnLongClickListener {
+
+
                 if (!selectedMode) {
 //                    selectedMode = true
                     actions.onStartSelectMode(customer)
@@ -82,6 +88,7 @@ class CustomerAdapter(
                 true
             }
             with(binding) {
+
                 selected.setOnClickListener {
                     if (selectedMode) {
 

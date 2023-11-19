@@ -1,5 +1,6 @@
 package com.example.reciclerviewconretrofit.framework.main
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -11,8 +12,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.reciclerviewconretrofit.domain.Customer
+import com.example.reciclerviewconretrofit.framework.detail.DetalleActivity
 import com.example.recyclerviewenhanced.R
 import com.example.recyclerviewenhanced.databinding.ActivityMainBinding
+import com.example.recyclerviewenhanced.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -38,7 +41,11 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
+   private fun cambiarPantalla(id: Int) {
+      val intent = Intent(this@MainActivity, DetalleActivity::class.java)
+      intent.putExtra(Constants.ID, id)
+      startActivity(intent)
+   }
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       primeraVez = true
@@ -60,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-         })
+         },::cambiarPantalla)
       binding.rvPersonas.adapter = personasAdapter
 
       val touchHelper = ItemTouchHelper(personasAdapter.swipeGesture)
@@ -136,7 +143,7 @@ class MainActivity : AppCompatActivity() {
 
          override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
             return when (item?.itemId) {
-               R.id.favorite -> {
+               R.id.delete -> {
                   // Handle share icon press
                   true
                }
@@ -186,7 +193,7 @@ class MainActivity : AppCompatActivity() {
 
       binding.topAppBar.setOnMenuItemClickListener { menuItem ->
          when (menuItem.itemId) {
-            R.id.favorite -> {
+            R.id.delete -> {
                // Handle favorite icon press
                true
             }
