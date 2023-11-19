@@ -5,19 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reciclerviewconretrofit.domain.Customer
+import com.example.reciclerviewconretrofit.use_cases.customers_usecases.DeleteCustomerUseCase
 import com.example.reciclerviewconretrofit.use_cases.customers_usecases.GetAllCustomersUseCase
 import com.example.reciclerviewconretrofit.utils.NetworkResultt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseCase) :
+class MainViewModel @Inject constructor(private val getAllCustomers: GetAllCustomersUseCase, private val deleteCustomerUseCase: DeleteCustomerUseCase) :
     ViewModel() {
     private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
 
     private val _uiState = MutableLiveData(MainState())
     val uiState: LiveData<MainState> get() = _uiState
@@ -37,7 +38,7 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
 
             }
             is MainEvent.InsertCustomer -> {
-                //insertPersonaWithCosas(event.persona!!)
+
                 getCustomers()
             }
             MainEvent.ErrorVisto -> _uiState.value = _uiState.value?.copy(error = null)
@@ -52,13 +53,15 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
             is MainEvent.SeleccionaCustomer -> seleccionaCustomer(event.customer)
             is MainEvent.GetCustomersFiltrados -> getPersonas(event.filtro)
             is MainEvent.DeleteCustomer -> {
+
                 deleteCustomers(event.custo)
+
+                getCustomers()
             }
 
             MainEvent.ResetSelectMode -> resetSelectMode()
 
             MainEvent.StartSelectMode -> _uiState.value = _uiState.value?.copy(selecMode = true)
-            else -> {}
         }
     }
     private fun resetSelectMode()
@@ -69,17 +72,23 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
 
     }
     private fun deleteCustomers(persona: Customer) {
+        runBlocking {
+            deleteCustomerUseCase.invoke(persona.id)
+        }
 
-        deleteCustomers(listOf(persona))
+
 
     }
-    private fun deleteCustomers(personas: List<Customer>) {
+     fun deleteCustomers(personas: List<Customer>) {
 
         viewModelScope.launch {
-//            _sharedFlow.emit("error")
+
+            personas.forEach { persona ->
+                deleteCustomerUseCase.invoke(persona.id)
+            }
             listaPersonas.removeAll(personas)
             selectedPersonas.removeAll(personas)
-            _uiState.value = _uiState.value?.copy(customersSeleccionados = selectedPersonas.toList())
+            _uiState.value = _uiState.value?.copy(customers = listaPersonas,customersSeleccionados = selectedPersonas.toList())
             getCustomers()
         }
 
@@ -88,14 +97,11 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
 
         viewModelScope.launch {
 
-            var result = getAllCustomers.invoke()
 
-
-           when (result) {
+            when (val result = getAllCustomers.invoke()) {
                 is NetworkResultt.Error -> _error.value = result.message ?: ""
                 is NetworkResultt.Loading -> TODO()
                 is NetworkResultt.Success ->listaPersonas= result.data as MutableList<Customer>
-               else -> {}
            }
 
 
@@ -105,7 +111,7 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
 
 
             _uiState.value = _uiState.value?.copy(customers = listaPersonas.toList())
-//            _personas.value = getPersonas.invoke()
+
 
         }
 
@@ -115,8 +121,8 @@ class MainViewModel @Inject constructor(val getAllCustomers: GetAllCustomersUseC
         viewModelScope.launch {
 
             _uiState.value =  _uiState.value?.copy (
-                customers = listaPersonas.filter { it.first_name.startsWith(filtro) }.toList())
-//            _personas.value = getPersonas.invoke()
+                customers = listaPersonas.filter { it.firstName.startsWith(filtro) }.toList())
+
 
         }
 

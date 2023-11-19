@@ -1,5 +1,6 @@
 package com.example.reciclerviewconretrofit.framework.detail
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -9,7 +10,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.reciclerviewconretrofit.domain.Customer
 import com.example.reciclerviewconretrofit.domain.Order
 
 import com.example.reciclerviewconretrofit.framework.main.SwipeGesture
@@ -18,9 +18,9 @@ import com.example.recyclerviewenhanced.databinding.ViewOrderBinding
 
 class DetalleAdapter(
     val context: Context,
-    val actions: DetalleAdapter.OrderActions,
+    val actions: OrderActions,
 
-): ListAdapter<Order, DetalleAdapter.ItemViewholder>(DetalleAdapter.DiffCallback()) {
+): ListAdapter<Order, DetalleAdapter.ItemViewholder>(DiffCallback()) {
 interface OrderActions {
     fun onDelete(order:Order )
     fun onStartSelectMode(order: Order)
@@ -32,12 +32,14 @@ interface OrderActions {
 
 private var selectedPersonas = mutableSetOf<Order>()
 
+@SuppressLint("NotifyDataSetChanged")
 fun startSelectMode() {
     selectedMode = true
     notifyDataSetChanged()
 }
 
 
+@SuppressLint("NotifyDataSetChanged")
 fun resetSelectMode() {
     selectedMode = false
     selectedPersonas.clear()
@@ -77,13 +79,9 @@ inner class ItemViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 
             if (!selectedMode) {
-//                    selectedMode = true
+
                 actions.onStartSelectMode(order)
-//                    item.isSelected = true
-//                    binding.selected.isChecked = true
-                //selectedPersonas.add(item)
-//                    notifyDataSetChanged()
-                //notifyItemChanged(adapterPosition)
+
             }
             true
         }
@@ -95,15 +93,13 @@ inner class ItemViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     if (binding.selected.isChecked ) {
                         order.isSelected = true
                         itemView.setBackgroundColor(Color.GREEN)
-                        //binding.selected.isChecked = true
-                        //notifyItemChanged(adapterPosition)
+
                         selectedPersonas.add(order)
                     } else {
                         order.isSelected = false
                         itemView.setBackgroundColor(Color.WHITE)
                         selectedPersonas.remove(order)
-                        //binding.selected.isChecked = false
-                        //notifyItemChanged(adapterPosition)
+
 
                     }
                     actions.itemHasClicked(order)
@@ -122,7 +118,7 @@ inner class ItemViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             if (selectedPersonas.contains(order)) {
                 itemView.setBackgroundColor(Color.GREEN)
                 binding.selected.isChecked = true
-                //selected.visibility = View.VISIBLE
+
             } else {
                 itemView.setBackgroundColor(Color.WHITE)
                 binding.selected.isChecked = false
@@ -143,25 +139,9 @@ class DiffCallback : DiffUtil.ItemCallback<Order>() {
 }
 
 val swipeGesture = object : SwipeGesture(context) {
-//        override fun onMove(
-//            recyclerView: RecyclerView,
-//            viewHolder: RecyclerView.ViewHolder,
-//            target: RecyclerView.ViewHolder
-//        ): Boolean {
-//            var initPos = viewHolder.adapterPosition
-//            var targetPos = target.adapterPosition
-//
-//            val mutable = currentList.toMutableList()
-//            Collections.swap(mutable,initPos,targetPos)
-//
-//           // this@PersonaAdapter.submitList(mutable)
-//
-//            return false
-//
-//        }
+
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        //if (!selectedMode) {
         when (direction) {
             ItemTouchHelper.LEFT -> {
                 selectedPersonas.remove(currentList[viewHolder.adapterPosition])
@@ -170,7 +150,7 @@ val swipeGesture = object : SwipeGesture(context) {
                     actions.itemHasClicked(currentList[viewHolder.adapterPosition])
             }
         }
-        //}
+
     }
 }
 }

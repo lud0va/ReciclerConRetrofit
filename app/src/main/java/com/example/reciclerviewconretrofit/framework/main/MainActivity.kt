@@ -3,6 +3,7 @@ package com.example.reciclerviewconretrofit.framework.main
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
    }
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
+
       primeraVez = true
       binding = ActivityMainBinding.inflate(layoutInflater)
       setContentView(binding.root)
@@ -73,12 +75,6 @@ class MainActivity : AppCompatActivity() {
       val touchHelper = ItemTouchHelper(personasAdapter.swipeGesture)
       touchHelper.attachToRecyclerView(binding.rvPersonas)
 
-      binding.button.setOnClickListener {
-//            val cosas = listOf(Cosa("cosa1", 22))
-//            println(personasAdapter.getSelectedItems().toString())
-//            viewModel.insertPersonaWithCosas(Persona(0, "nombre", LocalDate.now(), cosas))
-         viewModel.handleEvent(MainEvent.GetCustomers)
-      }
 
       viewModel.uiState.observe(this) { state ->
          if (state.customers != anteriorState?.customers
@@ -88,7 +84,7 @@ class MainActivity : AppCompatActivity() {
          if (state.customersSeleccionados != anteriorState?.customersSeleccionados) {
             personasAdapter.setSelectedItems(state.customersSeleccionados)
             actionMode?.title =
-               "${state.customersSeleccionados.size} selected"
+               "${state.customersSeleccionados.size}"
          }
 
          if (state.selecMode != anteriorState?.selecMode) {
@@ -96,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                personasAdapter.startSelectMode()
                if (primeraVez) {
                   startSupportActionMode(callback)?.let {
-                     actionMode = it;
+                     actionMode = it
                   }
                   primeraVez = false
                }
@@ -117,14 +113,14 @@ class MainActivity : AppCompatActivity() {
 
       val context = this
       lifecycleScope.launch {
-         viewModel.sharedFlow.collect(){ error->
+         viewModel.sharedFlow.collect { error->
             Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
          }
 
       }
 
       viewModel.handleEvent(MainEvent.GetCustomers)
-      configAppBar();
+      configAppBar()
 
    }
 
@@ -144,13 +140,12 @@ class MainActivity : AppCompatActivity() {
          override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
             return when (item?.itemId) {
                R.id.delete -> {
-                  // Handle share icon press
+                   if (viewModel.uiState.value?.customersSeleccionados!=null){
+                      viewModel.uiState.value?.customersSeleccionados?.let { viewModel.deleteCustomers(it) }
+                   }
                   true
                }
-               R.id.search -> {
-                  // Handle delete icon press
-                  true
-               }
+
                R.id.more -> {
                   viewModel.handleEvent(MainEvent.DeleteCustomersSeleccionadas())
                   true
@@ -168,7 +163,7 @@ class MainActivity : AppCompatActivity() {
 
    private fun configAppBar() {
       binding.topAppBar.setNavigationOnClickListener {
-         // Handle navigation icon press
+
       }
 
 
@@ -193,16 +188,8 @@ class MainActivity : AppCompatActivity() {
 
       binding.topAppBar.setOnMenuItemClickListener { menuItem ->
          when (menuItem.itemId) {
-            R.id.delete -> {
-               // Handle favorite icon press
-               true
-            }
-            R.id.search -> {
-               // Handle search icon press
-               true
-            }
             R.id.more -> {
-               // Handle more item (inside overflow menu) press
+
                true
             }
             else -> false

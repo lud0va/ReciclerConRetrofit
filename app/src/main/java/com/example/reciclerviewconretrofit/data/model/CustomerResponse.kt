@@ -9,17 +9,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 data class CustomerResponse(
-    @SerializedName("id")
+    @SerializedName(Constants.ID)
     val id: Int,
-    @SerializedName("first_name")
+    @SerializedName(Constants.FIRST_NAME)
     val first_name: String,
-    @SerializedName("last_name")
+    @SerializedName(Constants.LAST_NAME)
     val last_name: String,
-    @SerializedName("email")
+    @SerializedName(Constants.EMAIL)
     val email: String,
-    @SerializedName("phone")
+    @SerializedName(Constants.PHONE)
     val phone:String,
-    @SerializedName("date_of_birth")
+    @SerializedName(Constants.DATE_OF_BIRTH)
     val date_of_birth:LocalDate
 )
 

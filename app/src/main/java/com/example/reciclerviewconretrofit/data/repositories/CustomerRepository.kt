@@ -48,4 +48,21 @@ class CustomerRepository @Inject constructor(
             return error(e.message ?: e.toString())
         }
     }
+    suspend fun deleteCusto(id: Int): NetworkResultt<Int> {
+        try {
+            val response = customerService.deleteCustomer(id)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let {
+
+                    return NetworkResultt.Success(body)
+                }
+            }
+
+            return error("${response.code()} ${response.message()}")
+        } catch (e: Exception) {
+            return error(e.message ?: e.toString())
+        }
+    }
+
 }

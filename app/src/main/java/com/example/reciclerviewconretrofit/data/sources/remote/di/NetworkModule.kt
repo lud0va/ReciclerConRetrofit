@@ -1,8 +1,8 @@
-package com.maxi.dogapi.di
+package com.example.reciclerviewconretrofit.data.sources.remote.di
 
 import com.example.reciclerviewconretrofit.data.sources.remote.CustomerService
 import com.example.reciclerviewconretrofit.data.sources.remote.OrderService
-import com.example.recyclerviewenhanced.data.sources.remote.ServiceInterceptor
+import com.example.reciclerviewconretrofit.data.sources.remote.ServiceInterceptor
 import com.example.recyclerviewenhanced.utils.Constants
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
@@ -13,7 +13,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -42,10 +41,7 @@ object NetworkModule {
             .build()
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideConverterFactory(): GsonConverterFactory =
-//        GsonConverterFactory.create()
+
 
     @Singleton
     @Provides

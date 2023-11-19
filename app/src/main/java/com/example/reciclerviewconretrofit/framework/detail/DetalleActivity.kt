@@ -10,12 +10,10 @@ import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.example.reciclerviewconretrofit.domain.Customer
 import com.example.reciclerviewconretrofit.domain.Order
-import com.example.reciclerviewconretrofit.framework.main.CustomerAdapter
-import com.example.reciclerviewconretrofit.framework.main.MainEvent
 import com.example.recyclerviewenhanced.R
 import com.example.recyclerviewenhanced.databinding.DetalleMainBinding
+import com.example.recyclerviewenhanced.utils.Constants
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -39,29 +37,29 @@ class DetalleActivity : AppCompatActivity() {
     private var actionMode: ActionMode? = null
 
 
-    override  fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DetalleMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         intent.extras?.let {
-           viewModel.cargarCustomer(it.getInt("id"))
+            viewModel.cargarCustomer(it.getInt(Constants.ID))
 
         }
-     observarViewModel()
+        observarViewModel()
         ordersAdapter = DetalleAdapter(this,
-            object : DetalleAdapter.OrderActions{
-                override fun onDelete(order:Order) = viewModel.handleEvent(DetalleEvent.DeleteOrder(order))
+            object : DetalleAdapter.OrderActions {
+                override fun onDelete(order: Order) =
+                    viewModel.handleEvent(DetalleEvent.DeleteOrder(order))
 
-                override fun onStartSelectMode(order:Order) {
+                override fun onStartSelectMode(order: Order) {
                     viewModel.handleEvent(DetalleEvent.StartSelectMode)
                     viewModel.handleEvent(DetalleEvent.SeleccionaOrder(order))
                 }
 
-                override fun itemHasClicked(order:Order) {
+                override fun itemHasClicked(order: Order) {
 
                     viewModel.handleEvent(DetalleEvent.SeleccionaOrder(order))
                 }
-
 
 
             })
@@ -72,13 +70,14 @@ class DetalleActivity : AppCompatActivity() {
 
         viewModel.uiState.observe(this) { state ->
             if (state.orders != anteriorState?.orders
-                && state.orders.isNotEmpty())
+                && state.orders.isNotEmpty()
+            )
                 ordersAdapter.submitList(state.orders)
 
             if (state.orderSeleccionadas != anteriorState?.orderSeleccionadas) {
                 ordersAdapter.setSelectedItems(state.orderSeleccionadas)
                 actionMode?.title =
-                    "${state.orderSeleccionadas.size} selected"
+                    "${state.orderSeleccionadas.size}"
             }
 
             if (state.selecMode != anteriorState?.selecMode) {
@@ -107,7 +106,7 @@ class DetalleActivity : AppCompatActivity() {
 
         val context = this
         lifecycleScope.launch {
-            viewModel.sharedFlow.collect(){ error->
+            viewModel.sharedFlow.collect() { error ->
                 Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             }
 
@@ -124,15 +123,16 @@ class DetalleActivity : AppCompatActivity() {
                 Timber.e(error)
                 viewModel.errorMostrado()
             }
-            val cust=state.customer
-            binding.firstNameText.setText(cust?.first_name)
-            binding.lastNameText.setText(cust?.last_name)
+            val cust = state.customer
+            binding.firstNameText.setText(cust?.firstName)
+            binding.lastNameText.setText(cust?.lastName)
             binding.emailText.setText(cust?.email)
-            binding.dateText.setText(cust?.date_of_birth.toString())
+            binding.dateText.setText(cust?.dateOfBirth.toString())
             binding.phoneText.setText(cust?.phone)
 
         }
     }
+
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
@@ -151,20 +151,8 @@ class DetalleActivity : AppCompatActivity() {
 
             override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
                 return when (item?.itemId) {
-                    R.id.delete -> {
-                        // Handle share icon press
-                        true
-                    }
 
-                    R.id.search -> {
-                        // Handle delete icon press
-                        true
-                    }
 
-                    R.id.more -> {
-                        viewModel.handleEvent(DetalleEvent.DeleteOrdersSeleccionadas())
-                        true
-                    }
 
                     else -> false
                 }
@@ -179,43 +167,27 @@ class DetalleActivity : AppCompatActivity() {
 
     private fun configAppBar() {
         binding.topAppBar.setNavigationOnClickListener {
-            // Handle navigation icon press
+
         }
 
 
-        val actionSearch = binding.topAppBar.menu.findItem(R.id.search).actionView as SearchView
 
-        actionSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-
-                newText?.let { filtro ->
-                    viewModel.handleEvent(DetalleEvent.GetOrdersFiltrados(filtro))
-                }
-
-                return false
-            }
-
-
-        })
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.add->{
+                    viewModel.addOrder()
+                    true
+                }
                 R.id.delete -> {
-                    // Handle favorite icon press
+
                     true
                 }
 
-                R.id.search -> {
-                    // Handle search icon press
-                    true
-                }
+
 
                 R.id.more -> {
-                    // Handle more item (inside overflow menu) press
+
                     true
                 }
 

@@ -1,5 +1,6 @@
 package com.example.reciclerviewconretrofit.framework.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -26,24 +27,25 @@ class CustomerAdapter(
         fun itemHasClicked(customer: Customer)
 
 
-
     }
 
     private var selectedPersonas = mutableSetOf<Customer>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun startSelectMode() {
         selectedMode = true
         notifyDataSetChanged()
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun resetSelectMode() {
         selectedMode = false
         selectedPersonas.clear()
         notifyDataSetChanged()
     }
 
-    fun setSelectedItems(personasSeleccionadas: List<Customer>){
+    fun setSelectedItems(personasSeleccionadas: List<Customer>) {
         selectedPersonas.clear()
         selectedPersonas.addAll(personasSeleccionadas)
     }
@@ -68,22 +70,18 @@ class CustomerAdapter(
 
         private val binding = ViewCustomerBinding.bind(itemView)
 
-        fun bind(customer: Customer ,cambiarPantalla:(Int)->Unit) {
-               itemView.setOnClickListener{
+        fun bind(customer: Customer, cambiarPantalla: (Int) -> Unit) {
+            itemView.setOnClickListener {
 
-                   cambiarPantalla(customer.id)
-               }
+                cambiarPantalla(customer.id)
+            }
             itemView.setOnLongClickListener {
 
 
                 if (!selectedMode) {
-//                    selectedMode = true
+
                     actions.onStartSelectMode(customer)
-//                    item.isSelected = true
-//                    binding.selected.isChecked = true
-                    //selectedPersonas.add(item)
-//                    notifyDataSetChanged()
-                    //notifyItemChanged(adapterPosition)
+
                 }
                 true
             }
@@ -92,29 +90,27 @@ class CustomerAdapter(
                 selected.setOnClickListener {
                     if (selectedMode) {
 
-                        if (binding.selected.isChecked ) {
+                        if (binding.selected.isChecked) {
                             customer.isSelected = true
                             itemView.setBackgroundColor(Color.GREEN)
-                            //binding.selected.isChecked = true
-                            //notifyItemChanged(adapterPosition)
+
                             selectedPersonas.add(customer)
                         } else {
                             customer.isSelected = false
                             itemView.setBackgroundColor(Color.WHITE)
                             selectedPersonas.remove(customer)
-                            //binding.selected.isChecked = false
-                            //notifyItemChanged(adapterPosition)
+
 
                         }
                         actions.itemHasClicked(customer)
                     }
                 }
 
-                tvNombre.text = customer.first_name
+                tvNombre.text = customer.firstName
                 tvId.text = customer.id.toString()
                 if (selectedMode)
                     selected.visibility = View.VISIBLE
-                else{
+                else {
                     customer.isSelected = false
                     selected.visibility = View.GONE
                 }
@@ -122,7 +118,7 @@ class CustomerAdapter(
                 if (selectedPersonas.contains(customer)) {
                     itemView.setBackgroundColor(Color.GREEN)
                     binding.selected.isChecked = true
-                    //selected.visibility = View.VISIBLE
+
                 } else {
                     itemView.setBackgroundColor(Color.WHITE)
                     binding.selected.isChecked = false
@@ -142,25 +138,9 @@ class CustomerAdapter(
     }
 
     val swipeGesture = object : SwipeGesture(context) {
-//        override fun onMove(
-//            recyclerView: RecyclerView,
-//            viewHolder: RecyclerView.ViewHolder,
-//            target: RecyclerView.ViewHolder
-//        ): Boolean {
-//            var initPos = viewHolder.adapterPosition
-//            var targetPos = target.adapterPosition
-//
-//            val mutable = currentList.toMutableList()
-//            Collections.swap(mutable,initPos,targetPos)
-//
-//           // this@PersonaAdapter.submitList(mutable)
-//
-//            return false
-//
-//        }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            //if (!selectedMode) {
+
             when (direction) {
                 ItemTouchHelper.LEFT -> {
                     selectedPersonas.remove(currentList[viewHolder.adapterPosition])
@@ -169,7 +149,7 @@ class CustomerAdapter(
                         actions.itemHasClicked(currentList[viewHolder.adapterPosition])
                 }
             }
-            //}
+
         }
     }
 }

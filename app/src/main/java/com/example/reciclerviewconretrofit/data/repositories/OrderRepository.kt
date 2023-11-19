@@ -28,5 +28,36 @@ class OrderRepository @Inject constructor(
         }
     }
 
+    suspend fun addOrder(order: Order): NetworkResultt<Order> {
+        try {
+            val response =orderService.addOrder(order)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let {
+                    var order = it.toOrder()
+
+                    return NetworkResultt.Success(order)
+                }
+            }
+            return error("${response.code()} ${response.message()}")
+        } catch (e: Exception) {
+            return error(e.message ?: e.toString())
+        }
+    }
+    suspend fun deleteOrd(id: Int): NetworkResultt<Int> {
+        try {
+            val response = orderService.deleteOrder(id)
+            if (response.isSuccessful) {
+                val body = response.body()
+                body?.let {
+
+                    return NetworkResultt.Success(body)
+                }
+            }
+            return error("${response.code()} ${response.message()}")
+        } catch (e: Exception) {
+            return error(e.message ?: e.toString())
+        }
+    }
 
 }

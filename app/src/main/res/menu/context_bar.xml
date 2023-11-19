@@ -2,21 +2,32 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/delete"
+        android:id="@+id/add"
+        android:icon="@drawable/add"
+        android:title="add"
         android:contentDescription="descripcion"
-        android:title="favortio"
-        app:showAsAction="ifRoom" />
+        app:actionViewClass="androidx.appcompat.widget.AppCompatImageButton"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/delete"
+        android:icon="@drawable/cubo_de_basura"
+        android:title="delete"
+        android:contentDescription="descripcion"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatImageButton"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/search"
-        android:contentDescription="des2"
+
         android:title="SEARCH"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        android:contentDescription="des2"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/more"
         android:title="MORE"
         android:contentDescription="des1"
         app:showAsAction="never" />
+
 </menu>

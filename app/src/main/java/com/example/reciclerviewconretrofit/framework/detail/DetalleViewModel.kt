@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reciclerviewconretrofit.domain.Order
 import com.example.reciclerviewconretrofit.use_cases.customers_usecases.GetCustomerUseCase
+import com.example.reciclerviewconretrofit.use_cases.juegos_usecases.AddOrderUseCase
+import com.example.reciclerviewconretrofit.use_cases.juegos_usecases.DeleteOrderUseCase
 import com.example.reciclerviewconretrofit.use_cases.juegos_usecases.GetAllOrdersUseCase
 import com.example.reciclerviewconretrofit.utils.NetworkResultt
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,17 +15,20 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 import javax.inject.Inject
+
 @HiltViewModel
 class DetalleViewModel @Inject constructor(
-    val getCustomerUseCase: GetCustomerUseCase,
-    val getOrderUseCase: GetAllOrdersUseCase
+    private val getCustomerUseCase: GetCustomerUseCase,
+    private val getOrderUseCase: GetAllOrdersUseCase,
+    private val deleteOrderUseCase: DeleteOrderUseCase,
+    private val addOrderUseCase: AddOrderUseCase
 ) :
     ViewModel() {
 
 
     private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
 
     private val _uiState = MutableLiveData(DetalleState())
     val uiState: LiveData<DetalleState> get() = _uiState
@@ -39,6 +44,7 @@ class DetalleViewModel @Inject constructor(
     fun errorMostrado() {
         _uiState.value = _uiState.value?.copy(error = null)
     }
+
     fun handleEvent(event: DetalleEvent) {
         when (event) {
             DetalleEvent.GetOrders -> {
@@ -54,22 +60,15 @@ class DetalleViewModel @Inject constructor(
             DetalleEvent.ErrorVisto -> _uiState.value = _uiState.value?.copy(error = null)
 
 
-            is DetalleEvent.DeleteOrdersSeleccionadas -> {
-                _uiState.value?.let {
-                    deleteOrder(it.orderSeleccionadas)
-                    resetSelectMode()
-                }
-            }
-
             is DetalleEvent.SeleccionaOrder -> seleccionaOrder(event.order)
             is DetalleEvent.DeleteOrder -> {
+
                 deleteOrder(event.order)
             }
 
             DetalleEvent.ResetSelectMode -> resetSelectMode()
 
             DetalleEvent.StartSelectMode -> _uiState.value = _uiState.value?.copy(selecMode = true)
-            else -> {}
         }
     }
 
@@ -83,15 +82,17 @@ class DetalleViewModel @Inject constructor(
     }
 
     private fun deleteOrder(order: Order) {
-
+        runBlocking {
+            deleteOrderUseCase.invoke(order.order_id)
+        }
         deleteOrder(listOf(order))
 
     }
 
-     fun cargarCustomer(id: Int){
-         runBlocking {
-             _uiState.value=_uiState.value?.copy(customer = getCustomerUseCase.invoke(id).data)
-         }
+    fun cargarCustomer(id: Int) {
+        runBlocking {
+            _uiState.value = _uiState.value?.copy(customer = getCustomerUseCase.invoke(id).data)
+        }
 
 
     }
@@ -113,17 +114,17 @@ class DetalleViewModel @Inject constructor(
 
         viewModelScope.launch {
 
-            var result = _uiState.value?.customer?.id?.let { getOrderUseCase.invoke(it) }
 
-
-            when (result) {
+            when (val result = _uiState.value?.customer?.id?.let { getOrderUseCase.invoke(it) }) {
                 is NetworkResultt.Error -> _error.value = result.message ?: ""
                 is NetworkResultt.Loading -> TODO()
                 is NetworkResultt.Success -> listaOrders =
                     result.data as MutableList<Order>
 
 
-                else -> {_error}
+                else -> {
+                    _error
+                }
             }
 
 
@@ -137,6 +138,17 @@ class DetalleViewModel @Inject constructor(
 
     }
 
+    fun addOrder() {
+
+        _uiState.value?.customer?.id?.let { customerId ->
+            val cust: Int = customerId
+            runBlocking {
+                addOrderUseCase.invoke(Order(0, cust, LocalDateTime.now(), 3, false))
+            }
+
+        }
+        getOrders()
+    }
 
     private fun seleccionaOrder(order: Order) {
 

@@ -1,8 +1,8 @@
 package com.example.reciclerviewconretrofit.data.sources.remote
 
 import com.example.reciclerviewconretrofit.data.model.CustomerResponse
-import com.example.reciclerviewconretrofit.domain.Customer
 import com.example.recyclerviewenhanced.utils.Constants
+
 import retrofit2.Response
 import retrofit2.http.DELETE
 
@@ -12,13 +12,13 @@ import retrofit2.http.Path
 interface CustomerService {
 
 
-    @GET("customers")
+    @GET(Constants.CUSTOMER)
     suspend fun getCustomers(): Response<List<CustomerResponse>>
 
-    @GET("customers/{id}")
+    @GET(Constants.CUSTOMERS_POR_ID)
 
-    suspend fun getCustomer(@Path("id") id:Int):Response<CustomerResponse>
-    @DELETE("")
-    suspend fun deleteCustomer():Response<Int>
+    suspend fun getCustomer(@Path(Constants.ID) id:Int):Response<CustomerResponse>
+    @DELETE(Constants.CUSTOMERS_POR_ID)
+    suspend fun deleteCustomer(@Path(Constants.ID) id:Int):Response<Int>
 
 }

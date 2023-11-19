@@ -1,6 +1,5 @@
 package com.example.reciclerviewconretrofit.utils
 
-import com.example.recyclerviewenhanced.R
 
 sealed class NetworkResultt<T>(
     var data: T? = null,
